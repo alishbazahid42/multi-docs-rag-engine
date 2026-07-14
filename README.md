@@ -1,10 +1,10 @@
-# 🧠 Adaptive Retrieval-Augmented Generation (Adaptive RAG) System
+#  Adaptive Retrieval-Augmented Generation (Adaptive RAG) System
 
 An advanced, layout-aware multi-document QA system and scientific research assistant. This project combines LLM-driven query routing, dense vector database indexing (FAISS), Cross-Encoder reranking, and grounded answer generation with automatic citation extraction. It features a premium, responsive Web UI dashboard and a real-time explainability pipeline inspector.
 
 ---
 
-## 🚀 Key System Features
+##  Key System Features
 
 1. **Layout-Aware PDF Parser (`core/parser.py`)**
    - Parses documents page-by-page using `PyMuPDF` (fitz).
@@ -41,7 +41,7 @@ An advanced, layout-aware multi-document QA system and scientific research assis
 
 ---
 
-## 📐 System Pipeline Architecture
+##  System Pipeline Architecture
 
 The workflow for indexing documents and answering user queries:
 
@@ -99,10 +99,6 @@ flowchart TD
 
 ### 2. Clone & Prepare Directory
 Clone this repository to your local machine and navigate to the project folder:
-```bash
-git clone <your-github-repo-url>
-cd adaptive_rag_system
-```
 
 ### 3. Create a Virtual Environment (Optional but Recommended)
 ```bash
