@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive RAG Explorer | Advanced Document Intelligence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar card">
+            <div class="brand">
+                <i class="fa-solid fa-brain brand-logo"></i>
+                <div class="brand-text">
+                    <h1>ADAPTIVE RAG</h1>
+                    <span>Document Intelligence</span>
+                </div>
+            </div>
+            
+            <!-- Workspace Modes -->
+            <div class="workspace-modes">
+                <button class="mode-btn active" id="mode-rag">
+                    <i class="fa-solid fa-comments"></i> Chat RAG Mode
+                </button>
+                <button class="mode-btn" id="mode-research">
+                    <i class="fa-solid fa-flask"></i> Research Assistant
+                </button>
+            </div>
+
+            <!-- Embeddings Engine Selector -->
+            <div class="engine-selector">
+                <label for="engine-select"><i class="fa-solid fa-server"></i> Embeddings Engine:</label>
+                <select id="engine-select" class="fancy-select">
+                    <option value="MiniLM">MiniLM (all-MiniLM-L6)</option>
+                    <option value="SciBERT">SciBERT (Scientific)</option>
+                </select>
+            </div>
+            
+            <div class="section-title">
+                <i class="fa-solid fa-file-arrow-up"></i> Document Upload
+            </div>
+            
+            <div class="upload-zone" id="upload-zone">
+                <input type="file" id="file-input" multiple accept=".pdf" class="hidden-input">
+                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                <h3>Drag & Drop PDFs</h3>
+                <p>or click to browse files</p>
+                <div class="upload-progress-bar">
+                    <div class="upload-progress" id="upload-progress"></div>
+                </div>
+            </div>
+            
+            <div class="section-title">
+                <i class="fa-solid fa-folder-open"></i> Indexed Corpus
+                <span class="doc-count" id="doc-count">0</span>
+            </div>
+            
+            <div class="document-list" id="document-list">
+                <div class="empty-docs-message">
+                    <i class="fa-solid fa-database"></i>
+                    <p>No documents uploaded yet</p>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-danger" id="btn-clear">
+                    <i class="fa-solid fa-trash-can"></i> Clear Database
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Panel -->
+        <main class="chat-panel card">
+            <header class="chat-header">
+                <div class="header-info">
+                    <h2 id="panel-title-text">Conversational AI Reasoning</h2>
+                    <p id="system-status"><span class="status-dot online"></span> System Ready</p>
+                </div>
+                <div class="api-key-badge" id="api-key-badge">
+                    <i class="fa-solid fa-key"></i> Gemini Demo Mode
+                </div>
+            </header>
+
+            <!-- CHAT WORKSPACE VIEW -->
+            <div id="chat-view-container" class="chat-view-wrapper">
+                <div class="chat-history" id="chat-history">
+                    <!-- Welcome Message -->
+                    <div class="message assistant-message welcome-message">
+                        <div class="message-avatar">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <h3>Welcome to the Adaptive RAG Explorer!</h3>
+                            <p>Upload your PDFs on the left, then ask me anything. This system is designed with advanced hybrid search and adaptive reasoning capabilities:</p>
+                            <ul>
+                                <li><span class="highlight">Layout-Aware Parsing:</span> Extracts headings, paragraphs, and tables as structured Markdown.</li>
+                                <li><span class="highlight">Adaptive Routing:</span> Automatically decides if your question needs document search.</li>
+                                <li><span class="highlight">Dual Encoder Search & Reranking:</span> Fetches candidates via Bi-Encoder and filters noise with a Cross-Encoder.</li>
+                                <li><span class="highlight">Citations:</span> Highlights matching pages and paragraphs directly from the source.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pipeline Status Bar -->
+                <div class="pipeline-status-bar" id="pipeline-status-bar">
+                    <div class="pipeline-step" id="step-route">
+                        <i class="fa-solid fa-route"></i> Router
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="pipeline-step" id="step-retrieve">
+                        <i class="fa-solid fa-magnifying-glass"></i> Retrieving
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="pipeline-step" id="step-rerank">
+                        <i class="fa-solid fa-filter"></i> Reranking
+                    </div>
+                    <div class="pipeline-connector"></div>
+                    <div class="pipeline-step" id="step-generate">
+                        <i class="fa-solid fa-square-poll-horizontal"></i> Grounding
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <form id="chat-form">
+                        <input type="text" id="user-input" placeholder="Ask a question about your documents..." autocomplete="off">
+                        <button type="submit" class="btn btn-primary" id="btn-send">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RESEARCH WORKSPACE VIEW -->
+            <div id="research-view-container" class="research-view-wrapper hidden">
+                <div class="research-workbench">
+                    <div class="research-header-row">
+                        <h3>🔬 Scientific Paper Workbench</h3>
+                        <button class="btn btn-primary" id="btn-compare-all">
+                            <i class="fa-solid fa-code-compare"></i> Compare Uploaded Papers
+                        </button>
+                    </div>
+
+                    <div class="research-grid">
+                        <!-- Insights column -->
+                        <div class="research-column insights-column">
+                            <div class="column-header">
+                                <h4><i class="fa-solid fa-microscope"></i> Contribution & Insight Extractor</h4>
+                            </div>
+                            <div class="paper-dropdown-container">
+                                <label for="paper-select-dropdown">Target Document:</label>
+                                <select id="paper-select-dropdown" class="fancy-select">
+                                    <option value="">-- Choose an indexed paper --</option>
+                                </select>
+                            </div>
+
+                            <div class="insight-display-card" id="insight-display-card">
+                                <div class="empty-insights" id="empty-insights">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <p>Select a paper above to extract insights using SciBERT layout analysis and Gemini intelligence.</p>
+                                </div>
+                                <div class="insights-scroll-content hidden" id="insights-scroll-content">
+                                    <div class="extracted-title-wrapper">
+                                        <span class="extracted-badge">TITLE</span>
+                                        <h3 id="insight-title" class="extracted-title">No Title Extracted</h3>
+                                    </div>
+                                    <div class="insight-group">
+                                        <label><i class="fa-solid fa-bullseye"></i> Problem Statement</label>
+                                        <p id="insight-problem">Not loaded</p>
+                                    </div>
+                                    <div class="insight-group">
+                                        <label><i class="fa-solid fa-screwdriver-wrench"></i> Methodology</label>
+                                        <p id="insight-methodology">Not loaded</p>
+                                    </div>
+                                    <div class="insight-group">
+                                        <label><i class="fa-solid fa-chart-simple"></i> Key Results</label>
+                                        <p id="insight-results">Not loaded</p>
+                                    </div>
+                                    <div class="insight-group">
+                                        <label><i class="fa-solid fa-lightbulb"></i> Main Contributions</label>
+                                        <ul id="insight-contributions" class="contributions-list">
+                                            <li>Not loaded</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison column -->
+                        <div class="research-column comparison-column">
+                            <div class="column-header">
+                                <h4><i class="fa-solid fa-arrows-split-up-and-left"></i> Literature Synthesis Matrix</h4>
+                            </div>
+                            <div class="comparison-display-card" id="comparison-display-card">
+                                <div class="empty-comparison" id="empty-comparison">
+                                    <i class="fa-solid fa-diagram-project"></i>
+                                    <p>Click the compare button above to generate a side-by-side comparison matrix and synthesized literature review of all uploaded documents.</p>
+                                </div>
+                                <div class="comparison-scroll-content hidden" id="comparison-scroll-content">
+                                    <div class="synthesized-markdown" id="synthesized-markdown">
+                                        <!-- Synthesized review and table will go here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Explainability / RAG Pipeline Panel -->
+        <aside class="explain-panel card">
+            <header class="explain-header">
+                <h2><i class="fa-solid fa-chart-line"></i> Pipeline Inspection</h2>
+            </header>
+
+            <div class="explain-content">
+                <!-- Intent Routing Block -->
+                <div class="explain-section">
+                    <h3><i class="fa-solid fa-network-wired"></i> Routing Decision</h3>
+                    <div class="routing-card" id="routing-card">
+                        <div class="routing-header">
+                            <span class="badge" id="intent-badge">None</span>
+                            <span class="routing-metric" id="retrieval-metric"><i class="fa-solid fa-check"></i> Retrieval Active</span>
+                        </div>
+                        <p class="routing-reason" id="routing-reason">No query run yet. Ask a question to trigger the router.</p>
+                    </div>
+                </div>
+
+                <!-- Grounding Citations Block -->
+                <div class="explain-section flex-grow">
+                    <h3><i class="fa-solid fa-quote-left"></i> Verified Sources & Evidence</h3>
+                    <div class="citations-container" id="citations-container">
+                        <div class="empty-explain-state">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                            <p>Citations and page extracts will appear here when an answer is generated.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Retrieved Chunks Detail Block -->
+                <div class="explain-section">
+                    <h3><i class="fa-solid fa-layer-group"></i> Chunk Score Inspector</h3>
+                    <div class="inspector-container" id="inspector-container">
+                        <div class="empty-explain-state">
+                            <i class="fa-solid fa-bars-staged"></i>
+                            <p>Similarity vs. Rerank confidence scores.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>    
+    </div>
+
+    <!-- Script File -->
+    <script src="script.js"></script>
+</body>
+</html>
