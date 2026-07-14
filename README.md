@@ -179,6 +179,4 @@ http://127.0.0.1:8000/
 
 ---
 
-## 🛡️ License
 
-This project is licensed under the MIT License. Feel free to modify and build upon it!
